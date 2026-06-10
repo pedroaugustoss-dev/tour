@@ -1,0 +1,1500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tour — Guia e Posicionamento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-sans: 'Mulish', sans-serif;
+      --primary: #75c46a;
+      --primary-dark: #5a9e51;
+      --bg: #f4f6f8;
+      --card: #fff;
+      --text: #1a1a1a;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --target: #dbeafe;
+      --target-border: #3b82f6;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-sans); background: var(--bg); color: var(--text); line-height: 1.55; }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff; padding: 20px 28px 0;
+    }
+    header h1 { font-size: 1.35rem; }
+    header > p { opacity: .9; font-size: .88rem; padding-bottom: 12px; margin-top: 4px; }
+
+    .tabs { display: flex; gap: 4px; margin-top: 8px; }
+    .tab {
+      padding: 9px 18px; border: none; background: rgba(255,255,255,.15); color: #fff;
+      border-radius: 8px 8px 0 0; cursor: pointer; font-size: .85rem;
+    }
+    .tab.active { background: var(--bg); color: var(--text); font-weight: 600; }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    .layout { display: grid; grid-template-columns: 280px 1fr; min-height: calc(100vh - 115px); }
+    @media (max-width: 960px) {
+      .layout { grid-template-columns: 1fr; }
+      aside { max-height: 220px; overflow-y: auto; border-right: none !important; border-bottom: 1px solid var(--border); }
+    }
+
+    aside { background: var(--card); border-right: 1px solid var(--border); padding: 10px 0; overflow-y: auto; }
+    aside h2 { font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 8px 16px; }
+
+    .nav-btn, .step-btn {
+      display: block; width: 100%; text-align: left; padding: 8px 16px; border: none; background: none;
+      cursor: pointer; font-size: .82rem; border-left: 3px solid transparent;
+    }
+    .nav-btn:hover, .step-btn:hover { background: var(--bg); }
+    .nav-btn.active, .step-btn.active { background: rgba(117,196,106,.12); border-left-color: var(--primary); font-weight: 600; }
+    .meta { display: block; font-size: .7rem; color: var(--muted); font-weight: 400; margin-top: 2px; }
+
+    main { padding: 22px 26px; overflow-y: auto; }
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; }
+    .panel h3 { font-size: .95rem; margin-bottom: 10px; }
+    .panel h4 { font-size: .85rem; color: var(--primary-dark); margin: 16px 0 8px; }
+    .panel p, .panel li { font-size: .84rem; }
+    .panel ul, .panel ol { padding-left: 1.3rem; margin: 8px 0; }
+    .panel li { margin-bottom: 5px; }
+
+    .code {
+      background: #1e293b; color: #e2e8f0; padding: 14px; border-radius: 8px;
+      font-family: Consolas, monospace; font-size: .76rem; overflow-x: auto; white-space: pre; line-height: 1.55;
+    }
+    .code .k { color: #7dd3fc; } .code .s { color: #86efac; } .code .c { color: #94a3b8; }
+
+    table { width: 100%; border-collapse: collapse; font-size: .8rem; margin-top: 8px; }
+    th, td { border: 1px solid var(--border); padding: 7px 9px; text-align: left; vertical-align: top; }
+    th { background: var(--bg); font-size: .7rem; text-transform: uppercase; color: var(--muted); }
+    code { font-size: .75rem; color: var(--primary-dark); }
+
+    .guide-section { display: none; }
+    .guide-section.active { display: block; }
+
+    /* Passo a passo visual */
+    .wizard-intro { font-size: .84rem; color: var(--muted); margin-bottom: 20px; }
+    .wizard-steps { display: flex; flex-direction: column; gap: 0; }
+    .wizard-step {
+      display: grid; grid-template-columns: 44px 1fr; gap: 16px;
+      position: relative; padding-bottom: 28px;
+    }
+    .wizard-step:not(:last-child)::before {
+      content: ''; position: absolute; left: 21px; top: 44px; bottom: 0;
+      width: 2px; background: linear-gradient(var(--primary), var(--border));
+    }
+    .wizard-num {
+      width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+      background: var(--primary); color: #fff; font-weight: 700; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(117,196,106,.35); z-index: 1;
+    }
+    .wizard-body { min-width: 0; }
+    .wizard-title { font-size: .92rem; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+    .wizard-desc { font-size: .8rem; color: var(--muted); margin-bottom: 10px; }
+    .wizard-file {
+      display: inline-block; font-size: .72rem; font-family: Consolas, monospace;
+      background: rgba(117,196,106,.12); color: var(--primary-dark);
+      padding: 3px 8px; border-radius: 4px; margin-bottom: 8px;
+    }
+    .wizard-code { margin-top: 4px; }
+    .wizard-method-tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
+    .wizard-method-tab {
+      padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--card); cursor: pointer; font-size: .82rem; color: var(--text);
+    }
+    .wizard-method-tab:hover { background: var(--bg); }
+    .wizard-method-tab.active {
+      background: rgba(117,196,106,.15); border-color: var(--primary);
+      font-weight: 600; color: var(--primary-dark);
+    }
+    .wizard-track { display: none; }
+    .wizard-track.active { display: block; }
+    .wizard-note {
+      font-size: .8rem; color: var(--muted); background: var(--bg);
+      border-left: 3px solid var(--primary); padding: 10px 12px; border-radius: 0 6px 6px 0;
+      margin-bottom: 18px;
+    }
+    .split-diagram {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0 20px;
+    }
+    @media (max-width: 720px) { .split-diagram { grid-template-columns: 1fr; } }
+    .split-card {
+      background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px; font-size: .8rem;
+    }
+    .split-card h4 { font-size: .82rem; margin-bottom: 8px; color: var(--primary-dark); }
+    .split-card p { font-size: .78rem; color: var(--muted); margin-bottom: 10px; }
+    .split-mini {
+      position: relative; width: 100%; max-width: 200px; height: 120px; margin: 0 auto 8px;
+      background: var(--card); border: 2px solid var(--target-border); border-radius: 8px;
+    }
+    .split-mini::before, .split-mini::after {
+      content: ''; position: absolute; background: rgba(117,196,106,.35); pointer-events: none;
+    }
+    .split-mini.is-v::before {
+      left: 0; right: 0; top: 50%; height: 2px; transform: translateY(-50%);
+    }
+    .split-mini.is-v::after {
+      width: 10px; height: 10px; border-radius: 50%; background: var(--primary);
+      top: 18%; left: 75%; transform: translate(-50%, -50%);
+      box-shadow: 0 0 0 3px rgba(117,196,106,.25);
+    }
+    .split-mini.is-v .split-tt {
+      position: absolute; left: 75%; top: -28px; transform: translateX(-50%);
+      background: var(--primary); color: #fff; font-size: .6rem; padding: 3px 6px; border-radius: 4px;
+      white-space: nowrap;
+    }
+    .split-mini.is-h::before {
+      top: 0; bottom: 0; left: 50%; width: 2px; transform: translateX(-50%);
+    }
+    .split-mini.is-h::after {
+      width: 10px; height: 10px; border-radius: 50%; background: var(--primary);
+      top: 25%; left: calc(100% + 18px); transform: translate(-50%, -50%);
+      box-shadow: 0 0 0 3px rgba(117,196,106,.25);
+    }
+    .split-mini.is-h .split-tt {
+      position: absolute; left: calc(100% + 18px); top: 25%; transform: translateY(-50%);
+      background: var(--primary); color: #fff; font-size: .6rem; padding: 3px 6px; border-radius: 4px;
+      white-space: nowrap;
+    }
+    .split-mini .split-target {
+      position: absolute; inset: 28px 24px; background: var(--target);
+      border: 1px dashed var(--target-border); border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .62rem; color: #1e40af; text-align: center; line-height: 1.3;
+    }
+    .split-legend { font-size: .72rem; color: var(--muted); text-align: center; }
+    .pos-rule-list { margin: 12px 0 16px; padding-left: 1.2rem; }
+    .pos-rule-list li { margin-bottom: 8px; font-size: .82rem; }
+    @media (max-width: 600px) {
+      .wizard-step { grid-template-columns: 36px 1fr; gap: 12px; }
+      .wizard-num { width: 36px; height: 36px; font-size: .85rem; }
+      .wizard-step:not(:last-child)::before { left: 17px; top: 36px; }
+    }
+
+    /* Posicionamento */
+    .pos-main { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 115px); padding: 24px; }
+    .pos-panel { max-width: 720px; width: 100%; }
+    .code-label {
+      font-size: .72rem; text-transform: uppercase; letter-spacing: .04em;
+      color: var(--muted); margin: 20px 0 8px; font-weight: 600;
+    }
+    .step-code {
+      background: #1e293b; color: #e2e8f0; padding: 16px; border-radius: 8px;
+      font-family: Consolas, 'Cascadia Code', monospace; font-size: .78rem;
+      overflow-x: auto; white-space: pre; line-height: 1.6;
+    }
+    .step-code .k { color: #7dd3fc; }
+    .step-code .s { color: #86efac; }
+    .step-code .c { color: #94a3b8; }
+    .stage-wrap {
+      background: var(--bg); border-radius: 10px; padding: 36px; display: flex; justify-content: center; min-height: 380px; align-items: center;
+    }
+    .stage { position: relative; width: 260px; height: 170px; }
+    .zone-grid { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .zone { border: 1px dashed rgba(0,0,0,.08); position: relative; }
+    .zone.tl, .zone.tr { background: rgba(117,196,106,.1); }
+    .zone.bl, .zone.br { background: rgba(59,130,246,.08); }
+    .zl { position: absolute; font-size: .6rem; color: var(--muted); padding: 3px; }
+    .zone.tl .zl { top: 2px; left: 2px; } .zone.tr .zl { top: 2px; right: 2px; }
+    .zone.bl .zl { bottom: 2px; left: 2px; } .zone.br .zl { bottom: 2px; right: 2px; }
+
+    .target-box {
+      position: absolute; inset: 48px 36px; background: var(--target); border: 2px solid var(--target-border);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; color: #1e40af; font-weight: 500; z-index: 2; text-align: center; padding: 4px;
+    }
+    .demo-tt {
+      position: absolute; width: 130px; background: #fff; border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.12); font-size: .65rem; z-index: 10;
+      transition: top .2s, left .2s;
+    }
+    .demo-tt .h { background: var(--primary); color: #fff; padding: 5px 8px; border-radius: 8px 8px 0 0; font-weight: 600; }
+    .demo-tt .b { padding: 6px 8px; color: var(--muted); }
+    .demo-tt .ar { position: absolute; width: 9px; height: 9px; background: #fff; transform: rotate(45deg); }
+    .demo-tt.welcome { width: 180px; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+
+    .slot-picker { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+    .slot-btn {
+      padding: 4px 9px; border: 1px solid var(--border); border-radius: 5px;
+      background: var(--card); font-size: .7rem; font-family: monospace; cursor: pointer;
+    }
+    .slot-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .slot-btn.default-slot { border-style: dashed; }
+    .slot-picker { justify-content: center; }
+
+    /* Customização */
+    .custom-layout {
+      display: grid; grid-template-columns: 340px 1fr; gap: 20px;
+      min-height: calc(100vh - 115px); padding: 24px;
+    }
+    @media (max-width: 1000px) {
+      .custom-layout { grid-template-columns: 1fr; }
+    }
+    .custom-controls { display: flex; flex-direction: column; gap: 14px; }
+    .ctrl-group {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px;
+    }
+    .ctrl-group h3 { font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 12px; }
+    .ctrl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .ctrl-row:last-child { margin-bottom: 0; }
+    .ctrl-field { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl-field.full { grid-column: 1 / -1; }
+    .ctrl-field label { font-size: .72rem; color: var(--muted); }
+    .ctrl-field input[type="text"],
+    .ctrl-field input[type="number"],
+    .ctrl-field textarea,
+    .ctrl-field select {
+      padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px;
+      font-size: .8rem; font-family: inherit;
+    }
+    .ctrl-field input[type="color"] { height: 34px; padding: 2px; cursor: pointer; border: 1px solid var(--border); border-radius: 6px; }
+    .ctrl-field textarea { resize: vertical; min-height: 52px; }
+
+    .custom-demo-wrap { display: flex; flex-direction: column; gap: 14px; }
+    .custom-demo-label { font-size: .72rem; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+    .custom-demo-stage {
+      position: relative; border-radius: 12px; overflow: hidden;
+      min-height: 580px; background: #f3f5f8;
+      --vt-primary: #75c46a;
+      --vt-overlay: rgba(0, 0, 0, 0.32);
+      --vt-tooltipBg: #ffffff;
+      --vt-tooltipShadow: rgba(0, 0, 0, 0.2);
+      --vt-title: #111111;
+      --vt-content: #444444;
+      --vt-progressBar: #e5e7eb;
+      --vt-footer: #75c46a;
+      --vt-navText: #262626;
+      --vt-helpBtnBg: #75c46a;
+      --vt-helpBtnBorder: #ffffff;
+      --vt-helpBtnIcon: #000000;
+      --vt-spotlightBorder: #75c46a;
+      --vt-glow: rgba(117, 196, 106, 0.3);
+      --vt-arrow: #ffffff;
+    }
+    .custom-page-mock {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 580px; position: relative; padding: 24px;
+    }
+    .custom-page-mock .mock-card {
+      background: #fff; border-radius: 8px; padding: 20px 28px; width: 220px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      font-size: .8rem; color: #666; text-align: center;
+    }
+    .custom-spotlight {
+      position: absolute; border: 2px solid var(--vt-spotlightBorder); border-radius: 6px;
+      box-sizing: border-box; pointer-events: none; background: transparent;
+      box-shadow: 0 0 0 9999px var(--vt-overlay), 0 0 0 4px var(--vt-glow);
+      transition: top .15s, left .15s, width .15s, height .15s;
+    }
+    .custom-tooltip {
+      position: absolute; width: var(--demo-tooltip-width, 280px);
+      background: var(--vt-tooltipBg); border-radius: 8px;
+      box-shadow: 0 10px 25px var(--vt-tooltipShadow);
+      font-family: var(--font-sans); z-index: 5;
+      left: 50%; top: calc(50% + 70px); transform: translateX(-50%);
+    }
+    .custom-tooltip .ct-arrow {
+      position: absolute; width: 14px; height: 14px; background: var(--vt-arrow);
+      transform: rotate(45deg); top: -7px; left: 50%; margin-left: -7px;
+    }
+    .custom-tooltip .ct-body { padding: 16px; }
+    .custom-tooltip .ct-progress-text {
+      text-align: right; font-size: 11px; font-weight: bold; margin-bottom: 5px; color: var(--vt-primary);
+    }
+    .custom-tooltip .ct-progress-bar {
+      height: 4px; background: var(--vt-progressBar); border-radius: 2px; margin-bottom: 10px; overflow: hidden;
+    }
+    .custom-tooltip .ct-progress-fill {
+      height: 100%; background: var(--vt-primary); border-radius: 2px;
+      width: var(--demo-progress, 33%);
+    }
+    .custom-tooltip .ct-title { margin: 0 0 8px; font-size: 17px; color: var(--vt-title); }
+    .custom-tooltip .ct-content { margin: 0; font-size: 13px; color: var(--vt-content); line-height: 1.45; }
+    .custom-tooltip .ct-footer {
+      padding: 10px 16px; background: var(--vt-footer); border-radius: 0 0 8px 8px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .custom-tooltip .ct-skip { color: var(--vt-navText); font-size: 12px; text-decoration: underline; }
+    .custom-tooltip .ct-nav { display: flex; gap: 12px; color: var(--vt-navText); font-size: 12px; font-weight: 500; }
+    .custom-demo-stage.is-welcome::before {
+      content: ''; position: absolute; inset: 0; background: var(--vt-overlay); z-index: 1; pointer-events: none;
+    }
+    .custom-demo-stage.is-welcome .custom-spotlight { display: none; }
+    .custom-demo-stage.is-welcome .mock-card { opacity: 0.35; }
+    .custom-tooltip.is-welcome {
+      top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 5;
+    }
+    .custom-tooltip.is-welcome .ct-arrow { display: none; }
+
+    .custom-help-btn {
+      position: absolute; bottom: 16px; left: 16px; z-index: 6;
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 2px solid var(--vt-helpBtnBorder); background: var(--vt-helpBtnBg);
+      color: var(--vt-helpBtnIcon); font-size: 14px; font-weight: bold;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 10px var(--vt-tooltipShadow);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>VanillaTour — Documentação</h1>
+    <p>Tour puro: inicia apenas quando chamado (botão ?, start() ou bindTrigger). Sem auto-start nem sessão.</p>
+    <div class="tabs">
+      <button type="button" class="tab active" data-view="guide">Guia de utilização</button>
+      <button type="button" class="tab" data-view="position">Posicionamento</button>
+      <button type="button" class="tab" data-view="custom">Customização</button>
+    </div>
+  </header>
+
+  <div id="view-guide" class="view active">
+    <div class="layout">
+      <aside>
+        <h2>Navegação</h2>
+        <button class="nav-btn active" data-section="overview">Visão geral</button>
+        <button class="nav-btn" data-section="steps">Passo a passo</button>
+        <button class="nav-btn" data-section="positioning">Posicionamento</button>
+        <button class="nav-btn" data-section="custom">Customizações</button>
+        <button class="nav-btn" data-section="api">API</button>
+      </aside>
+      <main>
+        <section id="sec-overview" class="guide-section active">
+          <div class="panel">
+            <h3>Visão geral</h3>
+            <p>O <strong>VanillaTour</strong> é um componente de tour guiado. Ele <strong>não inicia sozinho</strong> e <strong>não valida login</strong> — só executa quando você chama <code>start()</code>, <code>bindTrigger()</code> ou o usuário clica no botão <strong>?</strong>.</p>
+            <h4>Arquivos</h4>
+            <ul>
+              <li><code>Tour.js</code> — engine</li>
+              <li><code>*-tour-config.js</code> — configuração por página</li>
+              <li><code>novo-tour-config.js</code> — template</li>
+            </ul>
+            <h4>Integração mínima</h4>
+            <div class="code"><span class="c">&lt;!-- Template Django --&gt;</span>
+<span class="k">&lt;script</span> type=<span class="s">"module"</span><span class="k">&gt;</span>
+  <span class="k">import</span> <span class="s">'../static/js/Tour/home-tour-config.js'</span>;
+<span class="k">&lt;/script&gt;</span></div>
+            <p style="margin-top:10px">Com <code>showHelpButton: true</code>, o botão ? aparece ao carregar a página.</p>
+          </div>
+        </section>
+
+        <section id="sec-steps" class="guide-section">
+          <div class="panel">
+            <h3>Passo a passo — criar um tour</h3>
+            <p class="wizard-intro">Escolha o método de integração. Em ambos, o tour só inicia quando chamado — o botão <strong>?</strong> aparece ao instanciar <code>VanillaTour</code> com <code>showHelpButton: true</code>.</p>
+
+            <div class="wizard-method-tabs">
+              <button type="button" class="wizard-method-tab active" data-wizard="new-file">Novo arquivo de config</button>
+              <button type="button" class="wizard-method-tab" data-wizard="existing-js">Arquivo JS existente</button>
+            </div>
+
+            <div id="wizard-new-file" class="wizard-track active">
+              <p class="wizard-note">Recomendado para telas novas. Separa a configuração do tour em <code>*-tour-config.js</code> e importa via <code>&lt;script type="module"&gt;</code>.</p>
+
+              <div class="wizard-steps">
+                <div class="wizard-step">
+                  <div class="wizard-num">1</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Copie o template</div>
+                    <p class="wizard-desc">Duplique <code>novo-tour-config.js</code> e renomeie para a sua tela.</p>
+                    <span class="wizard-file">minha-tela-tour-config.js</span>
+                    <div class="code wizard-code"><span class="c"># Estrutura de arquivos</span>
+PortalOficina/Oficina/static/js/Tour/
+  ├── Tour.js
+  ├── novo-tour-config.js          <span class="c">← template</span>
+  └── <span class="s">minha-tela-tour-config.js</span>  <span class="c">← seu arquivo</span></div>
+                  </div>
+                </div>
+
+                <div class="wizard-step">
+                  <div class="wizard-num">2</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Marque os elementos no HTML</div>
+                    <p class="wizard-desc">Use <code>data-tour</code> ou seletores CSS/ID que existam no DOM.</p>
+                    <span class="wizard-file">MinhaTela.html</span>
+                    <div class="code wizard-code"><span class="c">&lt;!-- Destaque no tour --&gt;</span>
+<span class="k">&lt;div</span> class=<span class="s">"card"</span> <span class="k">data-tour=</span><span class="s">"painel-principal"</span><span class="k">&gt;</span>
+  ...
+<span class="k">&lt;/div&gt;</span>
+
+<span class="k">&lt;button</span> id=<span class="s">"btn-salvar"</span><span class="k">&gt;</span>Salvar<span class="k">&lt;/button&gt;</span></div>
+                  </div>
+                </div>
+
+                <div class="wizard-step">
+                  <div class="wizard-num">3</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Configure o tour</div>
+                    <p class="wizard-desc">Defina <code>helpButtonId</code>, <code>settings</code> e o array <code>steps</code>.</p>
+                    <span class="wizard-file">minha-tela-tour-config.js</span>
+                    <div class="code wizard-code"><span class="k">import</span> { VanillaTour, TourRegistry, createTourTrigger } <span class="k">from</span> <span class="s">'./Tour.js'</span>;
+
+<span class="k">const</span> config = {
+  helpButtonId: <span class="s">'v-help-btn-minha-tela'</span>,
+  settings: {
+    padding: <span class="s">10</span>,
+    showHelpButton: <span class="k">true</span>,
+    lockScroll: <span class="k">true</span>
+  },
+  steps: [
+    {
+      welcome: <span class="k">true</span>,
+      title: <span class="s">'Bem-vindo!'</span>,
+      content: <span class="s">'Tour rápido desta tela...'</span>
+    },
+    {
+      element: <span class="s">'[data-tour="painel-principal"]'</span>,
+      title: <span class="s">'Painel Principal'</span>,
+      content: <span class="s">'Descrição do recurso...'</span>,
+      position: <span class="s">'bottom'</span>
+    },
+    {
+      element: <span class="s">'#btn-salvar'</span>,
+      title: <span class="s">'Salvar'</span>,
+      content: <span class="s">'Clique para gravar.'</span>,
+      quadrant: <span class="s">'top-right'</span>,
+      split: <span class="s">'h'</span>
+    }
+  ]
+};</div>
+                  </div>
+                </div>
+
+                <div class="wizard-step">
+                  <div class="wizard-num">4</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Instancie e registre</div>
+                    <p class="wizard-desc">Exporte a instância e, se quiser, triggers para botões customizados.</p>
+                    <span class="wizard-file">minha-tela-tour-config.js</span>
+                    <div class="code wizard-code"><span class="k">export const</span> minhaTelaTour = <span class="k">new</span> VanillaTour(config);
+TourRegistry.register(<span class="s">'minha-tela'</span>, minhaTelaTour);
+
+<span class="k">export const</span> { start: startMinhaTelaTour, bindTrigger: bindMinhaTelaTourTrigger } =
+  createTourTrigger(minhaTelaTour);</div>
+                  </div>
+                </div>
+
+                <div class="wizard-step">
+                  <div class="wizard-num">5</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Importe no template Django</div>
+                    <p class="wizard-desc">Basta importar o módulo — o botão <strong>?</strong> aparece e o usuário inicia o tour.</p>
+                    <span class="wizard-file">MinhaTela.html</span>
+                    <div class="code wizard-code"><span class="c">{% block content %}</span>
+  <span class="c">&lt;!-- conteúdo da página --&gt;</span>
+
+  <span class="k">&lt;script</span> type=<span class="s">"module"</span><span class="k">&gt;</span>
+    <span class="k">import</span> <span class="s">'../static/js/Tour/minha-tela-tour-config.js'</span>;
+  <span class="k">&lt;/script&gt;</span>
+<span class="c">{% endblock %}</span></div>
+                  </div>
+                </div>
+
+                <div class="wizard-step">
+                  <div class="wizard-num">6</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Opcional — botão customizado</div>
+                    <p class="wizard-desc">Vincule um botão da página para iniciar o tour sem usar o <strong>?</strong>.</p>
+                    <span class="wizard-file">MinhaTela.html</span>
+                    <div class="code wizard-code"><span class="k">&lt;button</span> type=<span class="s">"button"</span> id=<span class="s">"btn-ver-tour"</span><span class="k">&gt;</span>Ver tour<span class="k">&lt;/button&gt;</span>
+
+<span class="k">&lt;script</span> type=<span class="s">"module"</span><span class="k">&gt;</span>
+  <span class="k">import</span> { bindMinhaTelaTourTrigger } <span class="k">from</span> <span class="s">'../static/js/Tour/minha-tela-tour-config.js'</span>;
+  bindMinhaTelaTourTrigger(<span class="s">'#btn-ver-tour'</span>);
+<span class="k">&lt;/script&gt;</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="wizard-existing-js" class="wizard-track">
+              <p class="wizard-note">Use quando a tela já tem um <code>&lt;script src="..."&gt;</code> clássico com funções globais (<code>onclick</code>, jQuery). Adicione o tour no <strong>final</strong> do arquivo com <code>import()</code> dinâmico — não é preciso converter o script inteiro para módulo ES.</p>
+
+              <div class="wizard-steps">
+                <div class="wizard-step">
+                  <div class="wizard-num">1</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Marque os elementos no HTML</div>
+                    <p class="wizard-desc">Igual ao outro método: use <code>data-tour</code> ou seletores que já existam na página.</p>
+                    <span class="wizard-file">ConsultaListaOrcamento.html</span>
+                    <div class="code wizard-code"><span class="k">&lt;div</span> id=<span class="s">"consulta-orcamento"</span> <span class="k">data-tour=</span><span class="s">"filtros-orcamento"</span><span class="k">&gt;</span>
+  ...
+<span class="k">&lt;/div&gt;</span>
+
+<span class="k">&lt;button</span> id=<span class="s">"ConsultaListaOrcamento-consultar"</span> onclick=<span class="s">"ConsultaListaOrcamentos()"</span><span class="k">&gt;</span>
+  Consultar
+<span class="k">&lt;/button&gt;</span></div>
+                  </div>
+                </div>
+
+                <div class="wizard-step">
+                  <div class="wizard-num">2</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Adicione o tour no final do JS existente</div>
+                    <p class="wizard-desc">O caminho em <code>import()</code> é relativo ao <strong>arquivo JS</strong>, não ao HTML. Ajuste <code>../Tour/Tour.js</code> conforme a pasta do seu script.</p>
+                    <span class="wizard-file">ConsultaListaOrcamento1-0-2.js</span>
+                    <div class="code wizard-code"><span class="c">// ... funções existentes da página (mantidas como estão) ...</span>
+
+<span class="c">// Tour — no final do arquivo</span>
+import(<span class="s">'../Tour/Tour.js'</span>).then(({ VanillaTour, TourRegistry, createTourTrigger }) => {
+  <span class="k">const</span> config = {
+    helpButtonId: <span class="s">'v-help-btn-orcamento'</span>,
+    steps: [
+      {
+        welcome: <span class="k">true</span>,
+        title: <span class="s">'Consulta de Orçamentos'</span>,
+        content: <span class="s">'Tour rápido desta tela...'</span>
+      },
+      {
+        element: <span class="s">'[data-tour="filtros-orcamento"]'</span>,
+        title: <span class="s">'Filtros'</span>,
+        content: <span class="s">'Refine a busca por data, status, placa...'</span>,
+        position: <span class="s">'bottom'</span>
+      },
+      {
+        element: <span class="s">'#ConsultaListaOrcamento-consultar'</span>,
+        title: <span class="s">'Consultar'</span>,
+        content: <span class="s">'Clique para listar os orçamentos.'</span>,
+        quadrant: <span class="s">'top-right'</span>,
+        split: <span class="s">'h'</span>,
+        allowInteraction: <span class="k">true</span>
+      }
+    ]
+  };
+
+  <span class="k">const</span> tour = <span class="k">new</span> VanillaTour(config);
+  TourRegistry.register(<span class="s">'orcamento'</span>, tour);
+
+  <span class="c">// Opcional: expor para iniciar de outro ponto do mesmo arquivo</span>
+  window.startOrcamentoTour = createTourTrigger(tour).start;
+});</div>
+                  </div>
+                </div>
+
+                <div class="wizard-step">
+                  <div class="wizard-num">3</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Mantenha o script clássico no template</div>
+                    <p class="wizard-desc">Não altere para <code>type="module"</code> — funções como <code>ConsultaListaOrcamentos()</code> precisam continuar globais para <code>onclick</code> e scripts inline. Remova o import separado do <code>*-tour-config.js</code> se estiver fundindo tudo no mesmo arquivo.</p>
+                    <span class="wizard-file">ConsultaListaOrcamento.html</span>
+                    <div class="code wizard-code"><span class="c">&lt;!-- Script da página (inalterado) --&gt;</span>
+<span class="k">&lt;script</span> type=<span class="s">"text/javascript"</span> src=<span class="s">"../../static/js/ConsultaListaOrcamento/ConsultaListaOrcamento1-0-2.js"</span><span class="k">&gt;&lt;/script&gt;</span>
+
+<span class="c">&lt;!-- Não é necessário um segundo import do tour-config --&gt;</span>
+<span class="c">&lt;!-- &lt;script type="module"&gt; import '...orcamento-tour-config.js'; &lt;/script&gt; --&gt;</span></div>
+                  </div>
+                </div>
+
+                <div class="wizard-step">
+                  <div class="wizard-num">4</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Opcional — iniciar o tour programaticamente</div>
+                    <p class="wizard-desc">De qualquer função do mesmo arquivo JS, após o <code>import()</code> resolver.</p>
+                    <span class="wizard-file">ConsultaListaOrcamento1-0-2.js</span>
+                    <div class="code wizard-code"><span class="c">// Via função exposta no passo 2</span>
+window.startOrcamentoTour?.();
+
+<span class="c">// Ou via TourRegistry (se registrou o tour)</span>
+import(<span class="s">'../Tour/Tour.js'</span>).then(({ TourRegistry }) => {
+  TourRegistry.start(<span class="s">'orcamento'</span>);
+});</div>
+                  </div>
+                </div>
+
+                <div class="wizard-step">
+                  <div class="wizard-num">5</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Opcional — botão customizado</div>
+                    <p class="wizard-desc">Vincule o trigger dentro do callback do <code>import()</code>, ou use um <code>&lt;script type="module"&gt;</code> separado só para o botão.</p>
+                    <span class="wizard-file">ConsultaListaOrcamento1-0-2.js</span>
+                    <div class="code wizard-code">import(<span class="s">'../Tour/Tour.js'</span>).then(({ VanillaTour, createTourTrigger }) => {
+  <span class="k">const</span> tour = <span class="k">new</span> VanillaTour(config);
+  createTourTrigger(tour).bindTrigger(<span class="s">'#btn-ver-tour'</span>);
+});</div>
+                  </div>
+                </div>
+
+                <div class="wizard-step">
+                  <div class="wizard-num">6</div>
+                  <div class="wizard-body">
+                    <div class="wizard-title">Alternativa — converter o arquivo para módulo ES</div>
+                    <p class="wizard-desc">Só use se puder expor explicitamente as funções usadas no HTML. Sem <code>window.MinhaFuncao = ...</code>, <code>onclick</code> e scripts inline quebram.</p>
+                    <span class="wizard-file">MeuScript.js + MinhaTela.html</span>
+                    <div class="code wizard-code"><span class="k">import</span> { VanillaTour } <span class="k">from</span> <span class="s">'../Tour/Tour.js'</span>;
+
+<span class="k">function</span> MinhaFuncao() { <span class="c">/* ... */</span> }
+window.MinhaFuncao = MinhaFuncao; <span class="c">// obrigatório para onclick inline</span>
+
+<span class="k">new</span> VanillaTour({ helpButtonId: <span class="s">'v-help-btn-minha-tela'</span>, steps: [ <span class="c">/* ... */</span> ] });</div>
+                    <p class="wizard-desc" style="margin-top:10px">No HTML: <code>&lt;script type="module" src=".../MeuScript.js"&gt;&lt;/script&gt;</code></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="sec-positioning" class="guide-section">
+          <div class="panel">
+            <h3>Posicionamento — regra padrão</h3>
+            <p>O posicionamento usa <strong>duas propriedades</strong> em conjunto: <code>quadrant</code> escolhe <em>qual canto</em> do elemento; <code>split</code> escolhe <em>como</em> o tooltip se ancora nesse canto.</p>
+
+            <h4>1. Quadrant — as 4 zonas</h4>
+            <p>O elemento alvo é dividido em um plano com origem no <strong>centro</strong>, formando quatro zonas:</p>
+            <div class="code" style="white-space:pre;margin:10px 0 14px">        top-left      |  top-right
+        --------------+--------------
+        bottom-left   |  bottom-right</div>
+            <p><code>quadrant: 'top-right'</code> significa: “use a zona superior direita do elemento como referência”.</p>
+
+            <h4>2. Split — o eixo de corte (regra padrão)</h4>
+            <p>Dentro de cada zona existem <strong>duas posições possíveis</strong> para o tooltip — total de <strong>8 slots</strong>. O <code>split</code> define o eixo pelo qual o elemento é “cortado ao meio” para calcular onde o tooltip aparece:</p>
+
+            <div class="split-diagram">
+              <div class="split-card">
+                <h4>split: 'v' (vertical) — <strong>padrão</strong></h4>
+                <p>Corte <strong>horizontal</strong> no meio da div. O tooltip vai <strong>acima ou abaixo</strong>, alinhado à metade esquerda ou direita da zona escolhida.</p>
+                <div class="split-mini is-v">
+                  <div class="split-target">elemento</div>
+                  <span class="split-tt">tooltip</span>
+                </div>
+                <p class="split-legend">Ponto âncora na metade horizontal da zona · borda superior ou inferior</p>
+              </div>
+              <div class="split-card">
+                <h4>split: 'h' (horizontal)</h4>
+                <p>Corte <strong>vertical</strong> no meio da div. O tooltip vai à <strong>esquerda ou direita</strong>, alinhado à metade superior ou inferior da zona.</p>
+                <div class="split-mini is-h">
+                  <div class="split-target">elemento</div>
+                  <span class="split-tt">tooltip</span>
+                </div>
+                <p class="split-legend">Ponto âncora na metade vertical da zona · borda esquerda ou direita</p>
+              </div>
+            </div>
+
+            <p class="wizard-note" style="margin-top:0">
+              <strong>Regra prática:</strong> se você só informar <code>quadrant</code>, o split é sempre <code>'v'</code>. Para tooltip lateral (menu, botão à direita), adicione <code>split: 'h'</code> ou use o atalho <code>quadrant: 'top-right-h'</code>.
+            </p>
+
+            <h4>3. Combinações — os 8 slots</h4>
+            <table>
+              <tr><th>Sintaxe</th><th>Split</th><th>Onde o tooltip aparece</th></tr>
+              <tr><td><code>quadrant: 'top-right'</code></td><td>v</td><td><strong>Acima</strong>, alinhado à metade direita</td></tr>
+              <tr><td><code>quadrant: 'top-left'</code></td><td>v</td><td><strong>Acima</strong>, alinhado à metade esquerda</td></tr>
+              <tr><td><code>quadrant: 'bottom-right'</code></td><td>v</td><td><strong>Abaixo</strong>, alinhado à metade direita</td></tr>
+              <tr><td><code>quadrant: 'bottom-left'</code></td><td>v</td><td><strong>Abaixo</strong>, alinhado à metade esquerda</td></tr>
+              <tr><td><code>quadrant: 'top-right', split: 'h'</code></td><td>h</td><td><strong>À direita</strong>, alinhado à metade superior</td></tr>
+              <tr><td><code>quadrant: 'top-left', split: 'h'</code></td><td>h</td><td><strong>À esquerda</strong>, alinhado à metade superior</td></tr>
+              <tr><td><code>quadrant: 'bottom-right', split: 'h'</code></td><td>h</td><td><strong>À direita</strong>, alinhado à metade inferior</td></tr>
+              <tr><td><code>quadrant: 'bottom-left', split: 'h'</code></td><td>h</td><td><strong>À esquerda</strong>, alinhado à metade inferior</td></tr>
+            </table>
+
+            <h4>4. Quando usar cada split</h4>
+            <ul class="pos-rule-list">
+              <li><strong>split 'v' (padrão):</strong> cards, painéis, filtros largos — o tooltip não compete com o conteúdo lateral.</li>
+              <li><strong>split 'h':</strong> itens de menu, botões na lateral, elementos estreitos — o tooltip abre ao lado sem cobrir o alvo.</li>
+              <li><strong>Menus laterais:</strong> padrão do projeto é <code>quadrant: 'top-right', split: 'h'</code> (ver <code>home-tour-config.js</code>).</li>
+            </ul>
+
+            <h4>5. Modos alternativos</h4>
+            <table>
+              <tr><th>Sintaxe</th><th>Comportamento</th></tr>
+              <tr><td><code>quadrant: 'top-right-h'</code></td><td>Atalho para <code>quadrant: 'top-right', split: 'h'</code></td></tr>
+              <tr><td><code>position: 'bottom'</code></td><td>Legado — centralizado na largura total, abaixo do elemento (ignora quadrants)</td></tr>
+              <tr><td><code>position: 'top'</code></td><td>Legado — centralizado na largura total, acima do elemento</td></tr>
+              <tr><td><code>welcome: true</code></td><td>Modal central na tela, sem spotlight</td></tr>
+            </table>
+
+            <h4>6. Ajuste fino</h4>
+            <div class="code">{
+  element: <span class="s">'[data-tour="card"]'</span>,
+  quadrant: <span class="s">'bottom-right'</span>,
+  split: <span class="s">'v'</span>,       <span class="c">// opcional — já é o padrão</span>
+  margin: <span class="s">20</span>,            <span class="c">// distância entre tooltip e borda do elemento</span>
+  offsetX: <span class="s">-10</span>,          <span class="c">// deslocamento horizontal em px</span>
+  offsetY: <span class="s">8</span>             <span class="c">// deslocamento vertical em px</span>
+}</div>
+
+            <p style="margin-top:14px">Explore visualmente na aba <strong>Posicionamento</strong> (diagrama interativo) e na aba <strong>Customização</strong> (demo ao vivo).</p>
+          </div>
+        </section>
+
+        <section id="sec-custom" class="guide-section">
+          <div class="panel">
+            <h3>Exemplos de customização</h3>
+            <p>As customizações se dividem em dois níveis: <strong>globais</strong> (em <code>config.settings</code>, valem para todo o tour) e <strong>por passo</strong> (em cada item de <code>config.steps</code>). Experimente ao vivo na aba <strong>Customização</strong>.</p>
+
+            <h4>1. Onde configurar</h4>
+            <table>
+              <tr><th>Nível</th><th>Onde</th><th>Exemplos</th></tr>
+              <tr><td>Global</td><td><code>config.settings</code></td><td>Cores, textos dos botões, padding do spotlight, <code>lockScroll</code>, defaults por zona</td></tr>
+              <tr><td>Por passo</td><td>Cada objeto em <code>config.steps</code></td><td>Posição, margin, <code>beforeShow</code>, <code>action</code>, <code>allowInteraction</code></td></tr>
+              <tr><td>Instância</td><td><code>config.helpButtonId</code></td><td>ID único do botão <strong>?</strong> quando há mais de um tour na mesma página</td></tr>
+            </table>
+
+            <h4>2. Cores — paleta completa</h4>
+            <p>Sobrescreva via <code>settings.colors</code>. Valores não informados usam <code>TOUR_COLORS</code> de <code>Tour.js</code>.</p>
+            <table>
+              <tr><th>Chave</th><th>Aplica em</th><th>Padrão</th></tr>
+              <tr><td><code>primary</code></td><td>Barra de progresso, destaque “Passo X de Y”</td><td><code>#75c46a</code></td></tr>
+              <tr><td><code>footer</code></td><td>Rodapé do tooltip (Voltar / Próximo)</td><td><code>#75c46a</code></td></tr>
+              <tr><td><code>overlay</code></td><td>Fundo escurecido da página</td><td><code>rgba(0,0,0,0.7)</code></td></tr>
+              <tr><td><code>spotlightBorder</code> / <code>glow</code></td><td>Borda e brilho do spotlight</td><td>verde padrão</td></tr>
+              <tr><td><code>tooltipBg</code> / <code>tooltipShadow</code></td><td>Fundo e sombra do card</td><td>branco / sombra suave</td></tr>
+              <tr><td><code>title</code> / <code>content</code></td><td>Título e texto do passo</td><td><code>#111</code> / <code>#444</code></td></tr>
+              <tr><td><code>navText</code></td><td>Links Voltar, Próximo e Pular</td><td><code>#262626</code></td></tr>
+              <tr><td><code>helpBtnBg</code> / <code>helpBtnIcon</code></td><td>Botão <strong>?</strong> flutuante</td><td>verde / preto</td></tr>
+              <tr><td><code>arrow</code></td><td>Seta que aponta para o elemento</td><td><code>#ffffff</code></td></tr>
+            </table>
+            <div class="code" style="margin-top:12px">settings: {
+  colors: {
+    primary: <span class="s">'#75c46a'</span>,
+    overlay: <span class="s">'rgba(0, 0, 0, 0.75)'</span>,
+    spotlightBorder: <span class="s">'#75c46a'</span>,
+    footer: <span class="s">'#75c46a'</span>,
+    title: <span class="s">'#111111'</span>,
+    content: <span class="s">'#444444'</span>
+  }
+}</div>
+
+            <h4>3. Textos e comportamento global</h4>
+            <table>
+              <tr><th>Setting</th><th>Padrão</th><th>Descrição</th></tr>
+              <tr><td><code>padding</code></td><td><code>10</code></td><td>Espaço entre o spotlight e a borda do elemento alvo (px)</td></tr>
+              <tr><td><code>prevBtnText</code> / <code>nextBtnText</code> / <code>doneBtnText</code></td><td>Voltar / Próximo / Finalizar</td><td>Rótulos da navegação no tooltip</td></tr>
+              <tr><td><code>showHelpButton</code></td><td><code>true</code></td><td>Exibe o botão <strong>?</strong> ao carregar (não inicia o tour sozinho)</td></tr>
+              <tr><td><code>lockScroll</code></td><td><code>true</code></td><td>Bloqueia scroll da página enquanto o tour está ativo</td></tr>
+              <tr><td><code>onLeaveMenu</code></td><td>—</td><td>Callback ao sair de um passo com <code>isMenu: true</code> (ex.: fechar menus)</td></tr>
+            </table>
+            <div class="code" style="margin-top:12px">settings: {
+  padding: <span class="s">12</span>,
+  prevBtnText: <span class="s">'Anterior'</span>,
+  nextBtnText: <span class="s">'Continuar'</span>,
+  doneBtnText: <span class="s">'Concluir'</span>,
+  showHelpButton: <span class="k">true</span>,
+  lockScroll: <span class="k">true</span>
+}</div>
+
+            <h4>4. Posição — margin e offset</h4>
+            <p><code>margin</code> é a distância entre o tooltip e a borda do elemento. <code>offsetX</code> / <code>offsetY</code> deslocam o tooltip em pixels após o cálculo da posição.</p>
+            <div class="code">{
+  element: <span class="s">'[data-tour="card"]'</span>,
+  quadrant: <span class="s">'bottom-left'</span>,
+  margin: <span class="s">20</span>,
+  offsetX: <span class="s">-8</span>,
+  offsetY: <span class="s">12</span>
+}</div>
+            <p style="margin-top:10px">Para aplicar o mesmo ajuste em vários passos da mesma zona, use defaults em <code>settings.quadrants</code>:</p>
+            <div class="code">settings: {
+  quadrants: {
+    <span class="s">'top-left'</span>: { margin: <span class="s">24</span>, offsetY: <span class="s">4</span>, split: <span class="s">'h'</span> },
+    <span class="s">'bottom-right'</span>: { margin: <span class="s">18</span> }
+  }
+}</div>
+            <p class="wizard-note" style="margin-top:12px">Um passo pode sobrescrever o default da zona com <code>margin</code>, <code>offsetX</code>, <code>offsetY</code> ou <code>quadrantOverrides</code> no próprio objeto do passo.</p>
+
+            <h4>5. Interação com o elemento alvo</h4>
+            <p>Por padrão o overlay bloqueia cliques. Com <code>allowInteraction: true</code>, o usuário pode clicar no elemento destacado (útil para botões “Consultar”, links, etc.).</p>
+            <div class="code">{
+  element: <span class="s">'#btn-consultar'</span>,
+  title: <span class="s">'Consultar'</span>,
+  content: <span class="s">'Clique aqui para executar a busca.'</span>,
+  quadrant: <span class="s">'top-right'</span>,
+  split: <span class="s">'h'</span>,
+  allowInteraction: <span class="k">true</span>
+}</div>
+
+            <h4>6. Passo condicional — <code>beforeShow</code></h4>
+            <p>Função que retorna <code>true</code> para exibir o passo ou <code>false</code> para pular automaticamente. Ideal para resultados que só existem após uma ação.</p>
+            <div class="code">{
+  element: <span class="s">'[data-tour="resultados"]'</span>,
+  title: <span class="s">'Lista de Resultados'</span>,
+  content: <span class="s">'Aparece após a consulta.'</span>,
+  position: <span class="s">'bottom'</span>,
+  beforeShow: () => {
+    <span class="k">const</span> lista = document.querySelector(<span class="s">'#lista'</span>);
+    <span class="k">return</span> lista && lista.children.length > 0;
+  }
+}</div>
+
+            <h4>7. Menu lateral — <code>isMenu</code> + <code>action</code></h4>
+            <p>Abre o menu antes de posicionar o tooltip. Ao sair do passo (ou do tour), chama <code>settings.onLeaveMenu</code> para recolher os menus.</p>
+            <div class="code">settings: {
+  onLeaveMenu: () => collapseAllMenus()
+},
+steps: [
+  {
+    element: <span class="s">'[data-tour="menu-cadastros"]'</span>,
+    title: <span class="s">'Menu Cadastros'</span>,
+    content: <span class="s">'...'</span>,
+    quadrant: <span class="s">'top-right'</span>,
+    split: <span class="s">'h'</span>,
+    isMenu: <span class="k">true</span>,
+    scroll: <span class="k">false</span>,
+    animate: <span class="k">false</span>,
+    action: () => expandMenu(<span class="s">'menu-cadastros'</span>)
+  }
+]</div>
+
+            <h4>8. Modal e UI dinâmica — <code>action</code> + <code>onExit</code></h4>
+            <p><code>action</code> roda ao <strong>entrar</strong> no passo (ex.: abrir modal). <code>onExit</code> roda ao <strong>sair</strong> (voltar, avançar ou encerrar). O motor aguarda o DOM estabilizar até <code>actionMaxWait</code> ms (padrão <code>200</code>).</p>
+            <div class="code">{
+  element: <span class="s">'#modalNotaFiscal .modal-dialog'</span>,
+  title: <span class="s">'Detalhes'</span>,
+  content: <span class="s">'Informações do orçamento selecionado.'</span>,
+  position: <span class="s">'bottom'</span>,
+  actionMaxWait: <span class="s">500</span>,
+  action: () => { $(<span class="s">'#modalNotaFiscal'</span>).modal(<span class="s">'show'</span>); },
+  onExit: () => { $(<span class="s">'#modalNotaFiscal'</span>).modal(<span class="s">'hide'</span>); }
+}</div>
+
+            <h4>9. Scroll e animação por passo</h4>
+            <table>
+              <tr><th>Propriedade</th><th>Padrão</th><th>Uso</th></tr>
+              <tr><td><code>scroll</code></td><td><code>true</code></td><td>Rola a página até o elemento antes de destacá-lo. Use <code>false</code> em menus fixos.</td></tr>
+              <tr><td><code>animate</code></td><td><code>true</code></td><td>Anima a transição do spotlight. Use <code>false</code> em passos de menu para evitar “pulo”.</td></tr>
+            </table>
+
+            <h4>10. Exemplo completo</h4>
+            <div class="code"><span class="k">const</span> config = {
+  helpButtonId: <span class="s">'v-help-btn-minha-tela'</span>,
+  settings: {
+    padding: <span class="s">10</span>,
+    lockScroll: <span class="k">true</span>,
+    colors: { primary: <span class="s">'#75c46a'</span>, overlay: <span class="s">'rgba(0,0,0,0.75)'</span> },
+    quadrants: { <span class="s">'top-right'</span>: { margin: <span class="s">20</span> } },
+    onLeaveMenu: () => { <span class="c">/* fechar menus */</span> }
+  },
+  steps: [
+    { welcome: <span class="k">true</span>, title: <span class="s">'Bem-vindo'</span>, content: <span class="s">'...'</span> },
+    { element: <span class="s">'[data-tour="filtros"]'</span>, title: <span class="s">'Filtros'</span>, content: <span class="s">'...'</span>, position: <span class="s">'bottom'</span> },
+    { element: <span class="s">'#btn-acao'</span>, allowInteraction: <span class="k">true</span>, quadrant: <span class="s">'top-right'</span>, split: <span class="s">'h'</span>, title: <span class="s">'Ação'</span>, content: <span class="s">'...'</span> }
+  ]
+};</div>
+
+            <p style="margin-top:14px">Use a aba <strong>Customização</strong> para alterar cores e textos em tempo real e copiar o <code>config</code> gerado.</p>
+          </div>
+        </section>
+
+        <section id="sec-api" class="guide-section">
+          <div class="panel">
+            <h3>API</h3>
+            <p>Referência do módulo <code>Tour.js</code>. O tour <strong>não inicia automaticamente</strong> — use <code>start()</code>, <code>bindTrigger()</code>, o botão <strong>?</strong> ou <code>TourRegistry.start()</code>.</p>
+
+            <h4>1. Exports do módulo</h4>
+            <table>
+              <tr><th>Export</th><th>Tipo</th><th>Descrição</th></tr>
+              <tr><td><code>VanillaTour</code></td><td>class</td><td>Motor do tour — instancie com <code>new VanillaTour(config)</code></td></tr>
+              <tr><td><code>createTourTrigger</code></td><td>function</td><td>Retorna <code>{ start, bindTrigger }</code> para iniciar ou vincular cliques</td></tr>
+              <tr><td><code>TourRegistry</code></td><td>object</td><td>Registro nomeado de tours: <code>register</code>, <code>get</code>, <code>start</code></td></tr>
+              <tr><td><code>TOUR_COLORS</code></td><td>object</td><td>Paleta padrão (pode ser importada para referência)</td></tr>
+              <tr><td><code>TOUR_SLOTS</code></td><td>string[]</td><td>Lista dos 8 slots de posicionamento (<code>top-right</code>, <code>top-right-h</code>, …)</td></tr>
+            </table>
+            <div class="code" style="margin-top:12px"><span class="k">import</span> {
+  VanillaTour,
+  createTourTrigger,
+  TourRegistry,
+  TOUR_COLORS,
+  TOUR_SLOTS
+} <span class="k">from</span> <span class="s">'./Tour.js'</span>;</div>
+
+            <h4>2. Construtor — <code>new VanillaTour(config)</code></h4>
+            <table>
+              <tr><th>Campo</th><th>Tipo</th><th>Descrição</th></tr>
+              <tr><td><code>steps</code></td><td>array</td><td>Obrigatório. Lista de passos do tour.</td></tr>
+              <tr><td><code>settings</code></td><td>object</td><td>Opções globais (cores, textos, padding, quadrants, callbacks).</td></tr>
+              <tr><td><code>helpButtonId</code></td><td>string</td><td>ID do botão <strong>?</strong>. Padrão: <code>v-help-btn-{timestamp}</code>.</td></tr>
+            </table>
+            <p class="wizard-note" style="margin-top:12px">Ao instanciar, o motor injeta estilos, cria overlay/spotlight/tooltip e, se <code>showHelpButton</code> for <code>true</code>, adiciona o botão <strong>?</strong> ao <code>body</code>.</p>
+
+            <h4>3. Métodos da instância — <code>VanillaTour</code></h4>
+            <table>
+              <tr><th>Método</th><th>Descrição</th></tr>
+              <tr><td><code>tour.start()</code></td><td>Inicia o tour no primeiro passo (ou no primeiro passo não pulado por <code>beforeShow</code>).</td></tr>
+              <tr><td><code>tour.next()</code></td><td>Avança para o próximo passo. No último passo, equivale a <code>stop()</code>.</td></tr>
+              <tr><td><code>tour.prev()</code></td><td>Volta ao passo anterior. No primeiro passo, não faz nada.</td></tr>
+              <tr><td><code>tour.stop()</code></td><td>Encerra o tour, esconde UI, restaura scroll e executa <code>onExit</code> do passo atual se existir.</td></tr>
+              <tr><td><code>tour.destroy()</code></td><td>Remove do DOM overlay, spotlight, tooltip, botão ? e todos os listeners. Use ao descartar a página/componente.</td></tr>
+            </table>
+
+            <h4>4. Teclado e acessibilidade</h4>
+            <table>
+              <tr><th>Tecla</th><th>Ação</th></tr>
+              <tr><td><code>→</code> (ArrowRight)</td><td>Próximo passo</td></tr>
+              <tr><td><code>←</code> (ArrowLeft)</td><td>Passo anterior</td></tr>
+              <tr><td><code>Esc</code></td><td>Encerrar tour (<code>stop()</code>)</td></tr>
+            </table>
+            <p style="margin-top:8px;font-size:.82rem;color:var(--muted)">O tooltip usa <code>role="dialog"</code> e <code>aria-modal="true"</code>. O link “Pular Tutorial” também chama <code>stop()</code>.</p>
+
+            <h4>5. <code>createTourTrigger(tour)</code></h4>
+            <p>Helper para expor o tour a botões da página sem repetir lógica de clique.</p>
+            <div class="code"><span class="k">const</span> { start, bindTrigger } = createTourTrigger(homeTour);
+
+<span class="c">// Inicia diretamente</span>
+start();
+
+<span class="c">// Vincula um ou mais elementos (seletor, Element ou NodeList)</span>
+bindTrigger(<span class="s">'#btn-ver-tour'</span>);
+bindTrigger(document.querySelector(<span class="s">'.link-ajuda'</span>));</div>
+            <p style="margin-top:8px;font-size:.82rem">Nos arquivos <code>*-tour-config.js</code>, o padrão é exportar funções nomeadas:</p>
+            <div class="code"><span class="k">export const</span> { start: startHomeTour, bindTrigger: bindHomeTourTrigger } =
+  createTourTrigger(homeTour);</div>
+
+            <h4>6. <code>TourRegistry</code></h4>
+            <p>Mapa global por nome — útil para menu de ajuda centralizado ou iniciar tour de outro módulo.</p>
+            <table>
+              <tr><th>Método</th><th>Descrição</th></tr>
+              <tr><td><code>TourRegistry.register(name, tour)</code></td><td>Registra uma instância (ex.: <code>'home'</code>, <code>'orcamento'</code>).</td></tr>
+              <tr><td><code>TourRegistry.get(name)</code></td><td>Retorna a instância ou <code>undefined</code>.</td></tr>
+              <tr><td><code>TourRegistry.start(name)</code></td><td>Chama <code>start()</code> no tour registrado, se existir.</td></tr>
+            </table>
+            <div class="code" style="margin-top:12px">TourRegistry.register(<span class="s">'home'</span>, homeTour);
+TourRegistry.start(<span class="s">'home'</span>);</div>
+
+            <h4>7. Propriedades de cada passo (<code>steps[]</code>)</h4>
+            <table>
+              <tr><th>Propriedade</th><th>Tipo</th><th>Descrição</th></tr>
+              <tr><td><code>welcome</code></td><td>boolean</td><td>Modal central sem spotlight nem <code>element</code></td></tr>
+              <tr><td><code>element</code></td><td>string</td><td>Seletor CSS do alvo (obrigatório exceto em welcome)</td></tr>
+              <tr><td><code>title</code> / <code>content</code></td><td>string</td><td>Textos exibidos no tooltip</td></tr>
+              <tr><td><code>quadrant</code></td><td>string</td><td><code>top-right</code> | <code>top-left</code> | <code>bottom-left</code> | <code>bottom-right</code> (ou sufixo <code>-h</code> / <code>-v</code>)</td></tr>
+              <tr><td><code>split</code></td><td><code>'h'</code> | <code>'v'</code></td><td>Eixo de posicionamento — padrão <code>'v'</code></td></tr>
+              <tr><td><code>position</code></td><td><code>'top'</code> | <code>'bottom'</code></td><td>Modo legado centralizado (ignora quadrants)</td></tr>
+              <tr><td><code>margin</code>, <code>offsetX</code>, <code>offsetY</code></td><td>number</td><td>Ajuste fino da posição do tooltip</td></tr>
+              <tr><td><code>allowInteraction</code></td><td>boolean</td><td>Permite clicar no elemento alvo</td></tr>
+              <tr><td><code>beforeShow</code></td><td><code>() =&gt; boolean</code></td><td>Retorna <code>false</code> para pular o passo</td></tr>
+              <tr><td><code>action</code> / <code>onExit</code></td><td>function</td><td>Callback ao entrar / sair do passo</td></tr>
+              <tr><td><code>isMenu</code></td><td>boolean</td><td>Integra com <code>settings.onLeaveMenu</code></td></tr>
+              <tr><td><code>scroll</code></td><td>boolean</td><td>Scroll até o elemento (padrão <code>true</code>)</td></tr>
+              <tr><td><code>animate</code></td><td>boolean</td><td>Anima spotlight (padrão <code>true</code>)</td></tr>
+              <tr><td><code>actionMaxWait</code></td><td>number</td><td>Espera máx. em ms após <code>action</code> (padrão <code>200</code>)</td></tr>
+            </table>
+
+            <h4>8. Settings globais (<code>config.settings</code>)</h4>
+            <table>
+              <tr><th>Setting</th><th>Padrão</th><th>Descrição</th></tr>
+              <tr><td><code>padding</code></td><td><code>10</code></td><td>Margem interna do spotlight em relação ao elemento</td></tr>
+              <tr><td><code>showHelpButton</code></td><td><code>true</code></td><td>Botão <strong>?</strong> visível ao carregar</td></tr>
+              <tr><td><code>lockScroll</code></td><td><code>true</code></td><td>Bloqueia scroll durante o tour</td></tr>
+              <tr><td><code>prevBtnText</code> / <code>nextBtnText</code> / <code>doneBtnText</code></td><td>Voltar / Próximo / Finalizar</td><td>Textos de navegação</td></tr>
+              <tr><td><code>colors</code></td><td><code>TOUR_COLORS</code></td><td>Paleta customizada</td></tr>
+              <tr><td><code>quadrants</code></td><td>—</td><td>Defaults de margin/offset/split por zona</td></tr>
+              <tr><td><code>onLeaveMenu</code></td><td>—</td><td>Callback ao sair de passo de menu</td></tr>
+            </table>
+
+            <h4>9. Fluxo de vida do tour</h4>
+            <div class="code" style="white-space:pre;margin:10px 0">new VanillaTour(config)     <span class="c">→ cria DOM + botão ?</span>
+       │
+       ▼
+tour.start()                <span class="c">→ passo 0: beforeShow? → action? → spotlight + tooltip</span>
+       │
+       ├─ next() / prev()   <span class="c">→ onExit do passo atual → próximo passo</span>
+       ├─ stop() / Esc      <span class="c">→ onExit → esconde UI → mostra botão ?</span>
+       └─ destroy()         <span class="c">→ remove tudo do DOM</span></div>
+
+            <p style="margin-top:14px">Veja também <code>GUIA.md</code> e as abas <strong>Posicionamento</strong> / <strong>Customização</strong> para exemplos interativos.</p>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="view-custom" class="view">
+    <div class="custom-layout">
+      <div class="custom-controls" id="custom-controls">
+        <div class="ctrl-group">
+          <h3>Cores (settings.colors)</h3>
+          <div class="ctrl-row">
+            <div class="ctrl-field"><label>primary</label><input type="color" id="c-primary" value="#75c46a" data-var="--vt-primary"></div>
+            <div class="ctrl-field"><label>footer</label><input type="color" id="c-footer" value="#75c46a" data-var="--vt-footer"></div>
+            <div class="ctrl-field"><label>spotlightBorder</label><input type="color" id="c-spotlight" value="#75c46a" data-var="--vt-spotlightBorder"></div>
+            <div class="ctrl-field"><label>title</label><input type="color" id="c-title" value="#111111" data-var="--vt-title"></div>
+            <div class="ctrl-field"><label>content</label><input type="color" id="c-content" value="#444444" data-var="--vt-content"></div>
+            <div class="ctrl-field"><label>navText</label><input type="color" id="c-nav" value="#262626" data-var="--vt-navText"></div>
+            <div class="ctrl-field"><label>tooltipBg</label><input type="color" id="c-tooltip" value="#ffffff" data-var="--vt-tooltipBg"></div>
+            <div class="ctrl-field"><label>helpBtnBg</label><input type="color" id="c-help" value="#75c46a" data-var="--vt-helpBtnBg"></div>
+          </div>
+          <div class="ctrl-row">
+            <div class="ctrl-field full">
+              <label>overlay (rgba)</label>
+              <input type="text" id="c-overlay" value="rgba(0, 0, 0, 0.32)" data-var="--vt-overlay">
+            </div>
+          </div>
+        </div>
+
+        <div class="ctrl-group">
+          <h3>Textos do passo</h3>
+          <div class="ctrl-row">
+            <div class="ctrl-field full"><label>Título</label><input type="text" id="txt-title" value="Painel de Indicadores"></div>
+            <div class="ctrl-field full"><label>Conteúdo</label><textarea id="txt-content">Aqui você acompanha o volume de orçamentos de acordo com o status atual.</textarea></div>
+          </div>
+        </div>
+
+        <div class="ctrl-group">
+          <h3>Botões (settings)</h3>
+          <div class="ctrl-row">
+            <div class="ctrl-field"><label>prevBtnText</label><input type="text" id="txt-prev" value="Voltar"></div>
+            <div class="ctrl-field"><label>nextBtnText</label><input type="text" id="txt-next" value="Próximo"></div>
+            <div class="ctrl-field"><label>doneBtnText</label><input type="text" id="txt-done" value="Finalizar"></div>
+            <div class="ctrl-field"><label>Passo atual</label><input type="number" id="num-step" value="1" min="1" max="7"></div>
+            <div class="ctrl-field"><label>Total de passos</label><input type="number" id="num-total" value="7" min="1" max="20"></div>
+          </div>
+        </div>
+
+        <div class="ctrl-group">
+          <h3>Spotlight e tooltip</h3>
+          <div class="ctrl-row">
+            <div class="ctrl-field"><label>padding (settings)</label><input type="number" id="num-padding" value="10" min="0" max="40"></div>
+            <div class="ctrl-field"><label>margin (passo)</label><input type="number" id="num-margin" value="15" min="0" max="40"></div>
+            <div class="ctrl-field"><label>Largura tooltip (px)</label><input type="number" id="num-width" value="280" min="200" max="400"></div>
+            <div class="ctrl-field">
+              <label>Posição</label>
+              <select id="sel-position">
+                <option value="welcome" selected>welcome (centralizado)</option>
+                <option value="bottom">position: bottom</option>
+                <option value="top">position: top</option>
+                <option value="top-right">quadrant: top-right</option>
+                <option value="top-right-h">quadrant: top-right + h</option>
+                <option value="top-left">quadrant: top-left</option>
+                <option value="bottom-left">quadrant: bottom-left</option>
+                <option value="bottom-right">quadrant: bottom-right</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-demo-wrap">
+        <div class="custom-demo-label">Demonstração ao vivo</div>
+        <div class="custom-demo-stage" id="custom-demo-stage">
+          <div class="custom-page-mock">
+            <div class="mock-card" id="mock-target">Elemento alvo</div>
+          </div>
+          <div class="custom-spotlight" id="custom-spotlight"></div>
+          <div class="custom-tooltip" id="custom-tooltip">
+            <div class="ct-arrow"></div>
+            <div class="ct-body">
+              <div class="ct-progress-text" id="demo-progress-text">Passo 1 de 7</div>
+              <div class="ct-progress-bar"><div class="ct-progress-fill" id="demo-progress-fill"></div></div>
+              <h3 class="ct-title" id="demo-title">Painel de Indicadores</h3>
+              <p class="ct-content" id="demo-content">Aqui você acompanha o volume de orçamentos de acordo com o status atual.</p>
+            </div>
+            <div class="ct-footer">
+              <span class="ct-skip">Pular Tutorial</span>
+              <div class="ct-nav">
+                <span id="demo-prev">‹ Voltar</span>
+                <span id="demo-next">Próximo ›</span>
+              </div>
+            </div>
+          </div>
+          <div class="custom-help-btn">?</div>
+        </div>
+        <div class="code-label">Código gerado (settings + passo)</div>
+        <div class="step-code" id="custom-code"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-position" class="view">
+    <div class="pos-main">
+      <div class="panel pos-panel">
+        <div class="stage-wrap">
+          <div class="stage" id="stage">
+            <div class="zone-grid">
+              <div class="zone tl"><span class="zl">top-left</span></div>
+              <div class="zone tr"><span class="zl">top-right</span></div>
+              <div class="zone bl"><span class="zl">bottom-left</span></div>
+              <div class="zone br"><span class="zl">bottom-right</span></div>
+            </div>
+            <div class="target-box">Elemento alvo</div>
+            <div class="demo-tt" id="demo-tt" style="display:none">
+              <div class="ar" id="demo-ar"></div>
+              <div class="h">Título</div>
+              <div class="b">Conteúdo</div>
+            </div>
+          </div>
+        </div>
+        <div class="slot-picker" id="slot-picker"></div>
+        <div class="code-label">Código do passo</div>
+        <div class="step-code" id="step-code"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ZONES = ['top-right', 'top-left', 'bottom-left', 'bottom-right'];
+
+    document.querySelectorAll('.tab').forEach(t => {
+      t.onclick = () => {
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+        document.getElementById('view-' + t.dataset.view).classList.add('active');
+      };
+    });
+
+    document.querySelectorAll('.nav-btn').forEach(b => {
+      b.onclick = () => {
+        document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.guide-section').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        document.getElementById('sec-' + b.dataset.section).classList.add('active');
+      };
+    });
+
+    document.querySelectorAll('.wizard-method-tab').forEach(tab => {
+      tab.onclick = () => {
+        document.querySelectorAll('.wizard-method-tab').forEach(x => x.classList.remove('active'));
+        document.querySelectorAll('.wizard-track').forEach(x => x.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('wizard-' + tab.dataset.wizard).classList.add('active');
+      };
+    });
+
+    function positionDemo(slot) {
+      const tt = document.getElementById('demo-tt');
+      const ar = document.getElementById('demo-ar');
+      tt.style.display = 'block';
+      tt.classList.remove('welcome');
+      ar.style.display = 'block';
+
+      const t = { l: 36, t: 48, w: 188, h: 74 };
+      const tw = 130, th = 62, m = 10;
+      let left, top, arS = {};
+
+      if (slot === 'welcome') {
+        tt.classList.add('welcome');
+        ar.style.display = 'none';
+        tt.style.left = tt.style.top = '';
+        return;
+      }
+
+      const cx = t.l + t.w / 2, cy = t.t + t.h / 2;
+
+      if (slot === 'bottom') {
+        left = cx - tw / 2; top = t.t + t.h + m;
+        arS = { bottom: '-4px', left: '50%', marginLeft: '-4px' };
+      } else if (slot === 'top') {
+        left = cx - tw / 2; top = t.t - m - th;
+        arS = { top: '-4px', left: '50%', marginLeft: '-4px' };
+      } else {
+        const m2 = slot.match(/^(top-right|top-left|bottom-left|bottom-right)(-h)?$/);
+        if (!m2) return;
+        const zone = m2[1], isH = !!m2[2];
+        const isTop = zone.startsWith('top'), isRight = zone.endsWith('right');
+
+        if (!isH) {
+          const ax = isRight ? cx + t.w / 4 : cx - t.w / 4;
+          left = ax - tw / 2;
+          top = isTop ? t.t - m - th : t.t + t.h + m;
+          arS = isTop ? { bottom: '-4px', left: `${ax - left - 4}px` } : { top: '-4px', left: `${ax - left - 4}px`, background: 'var(--primary)' };
+        } else {
+          const ay = isTop ? cy - t.h / 4 : cy + t.h / 4;
+          top = ay - th / 2;
+          left = isRight ? t.l + t.w + m : t.l - m - tw;
+          arS = isRight ? { left: '-4px', top: `${ay - top - 4}px` } : { right: '-4px', top: `${ay - top - 4}px` };
+        }
+      }
+
+      tt.style.left = left + 'px';
+      tt.style.top = top + 'px';
+      tt.style.transform = 'none';
+      Object.assign(ar.style, { top: '', bottom: '', left: '', right: '', marginLeft: '', background: '#fff' }, arS);
+    }
+
+    function buildStepCode(slot) {
+      const el = `<span class="k">element</span>: <span class="s">'[data-tour="meu-elemento"]'</span>`;
+      const title = `<span class="k">title</span>: <span class="s">'Título do passo'</span>`;
+      const content = `<span class="k">content</span>: <span class="s">'Texto explicativo...'</span>`;
+
+      if (slot === 'welcome') {
+        return `{
+  <span class="k">welcome</span>: <span class="k">true</span>,
+  ${title},
+  ${content}
+}`;
+      }
+
+      if (slot === 'bottom' || slot === 'top') {
+        return `{
+  ${el},
+  ${title},
+  ${content},
+  <span class="k">position</span>: <span class="s">'${slot}'</span>
+}`;
+      }
+
+      const m = slot.match(/^(top-right|top-left|bottom-left|bottom-right)(-h)?$/);
+      if (!m) return '';
+
+      const zone = m[1];
+      const isH = !!m[2];
+      const splitLine = isH
+        ? `,\n  <span class="k">split</span>: <span class="s">'h'</span>`
+        : '';
+
+      return `{
+  ${el},
+  ${title},
+  ${content},
+  <span class="k">quadrant</span>: <span class="s">'${zone}'</span>${splitLine}
+}`;
+    }
+
+    function highlightSlot(slot) {
+      document.querySelectorAll('.slot-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.slot === slot);
+      });
+      positionDemo(slot);
+      document.getElementById('step-code').innerHTML = buildStepCode(slot);
+    }
+
+    const picker = document.getElementById('slot-picker');
+    ['welcome', 'bottom', 'top', ...ZONES, ...ZONES.map(z => z + '-h')].forEach(slot => {
+      const btn = document.createElement('button');
+      btn.className = 'slot-btn' + (ZONES.includes(slot) ? ' default-slot' : '');
+      btn.dataset.slot = slot;
+      btn.textContent = ZONES.includes(slot) ? slot + ' (v)' : slot;
+      btn.title = ZONES.includes(slot) ? 'Padrão — split vertical' : '';
+      btn.onclick = () => highlightSlot(slot);
+      picker.appendChild(btn);
+    });
+
+    highlightSlot('top-right');
+
+    // ── Customização ──────────────────────────────────────────────────────
+
+    const customStage = document.getElementById('custom-demo-stage');
+    const customSpotlight = document.getElementById('custom-spotlight');
+    const customTooltip = document.getElementById('custom-tooltip');
+    const mockTarget = document.getElementById('mock-target');
+
+    function hexToRgba(hex, alpha) {
+      const h = hex.replace('#', '');
+      const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+      const n = parseInt(full, 16);
+      return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+    }
+
+    function positionCustomTooltip(slot, margin) {
+      customStage.classList.toggle('is-welcome', slot === 'welcome');
+      customTooltip.classList.toggle('is-welcome', slot === 'welcome');
+      const arrow = customTooltip.querySelector('.ct-arrow');
+
+      if (slot === 'welcome') {
+        customSpotlight.style.display = 'none';
+        customTooltip.style.left = '';
+        customTooltip.style.top = '';
+        customTooltip.style.transform = '';
+        if (arrow) arrow.style.display = 'none';
+        return;
+      }
+
+      customSpotlight.style.display = '';
+      if (arrow) arrow.style.display = '';
+
+      const stageRect = customStage.getBoundingClientRect();
+      const rect = mockTarget.getBoundingClientRect();
+      const rel = {
+        left: rect.left - stageRect.left,
+        top: rect.top - stageRect.top,
+        width: rect.width,
+        height: rect.height
+      };
+
+      const padding = Number(document.getElementById('num-padding').value) || 10;
+      customSpotlight.style.left = (rel.left - padding) + 'px';
+      customSpotlight.style.top = (rel.top - padding) + 'px';
+      customSpotlight.style.width = (rel.width + padding * 2) + 'px';
+      customSpotlight.style.height = (rel.height + padding * 2) + 'px';
+
+      const tw = customTooltip.offsetWidth;
+      const th = customTooltip.offsetHeight;
+      const cx = rel.left + rel.width / 2;
+      const cy = rel.top + rel.height / 2;
+      let left, top;
+
+      if (slot === 'bottom') {
+        left = cx - tw / 2;
+        top = rel.top + rel.height + margin;
+      } else if (slot === 'top') {
+        left = cx - tw / 2;
+        top = rel.top - margin - th;
+      } else {
+        const m = slot.match(/^(top-right|top-left|bottom-left|bottom-right)(-h)?$/);
+        if (!m) return;
+        const zone = m[1], isH = !!m[2];
+        const isTop = zone.startsWith('top'), isRight = zone.endsWith('right');
+
+        if (!isH) {
+          const ax = isRight ? cx + rel.width / 4 : cx - rel.width / 4;
+          left = ax - tw / 2;
+          top = isTop ? rel.top - margin - th : rel.top + rel.height + margin;
+        } else {
+          const ay = isTop ? cy - rel.height / 4 : cy + rel.height / 4;
+          top = ay - th / 2;
+          left = isRight ? rel.left + rel.width + margin : rel.left - margin - tw;
+        }
+      }
+
+      customTooltip.style.left = left + 'px';
+      customTooltip.style.top = top + 'px';
+      customTooltip.style.transform = 'none';
+
+      arrow.style.cssText = 'position:absolute;width:14px;height:14px;background:var(--vt-arrow);transform:rotate(45deg);display:block;';
+
+      if (slot === 'bottom' || (slot.match(/bottom/) && !slot.endsWith('-h'))) {
+        arrow.style.top = '-7px'; arrow.style.left = '50%'; arrow.style.marginLeft = '-7px';
+        arrow.style.background = 'var(--vt-tooltipBg)';
+      } else if (slot === 'top' || (slot.match(/^top-/) && !slot.endsWith('-h'))) {
+        arrow.style.bottom = '-7px'; arrow.style.top = 'auto'; arrow.style.left = '50%'; arrow.style.marginLeft = '-7px';
+        arrow.style.background = 'var(--vt-footer)';
+      } else if (slot.endsWith('-h') && slot.includes('right')) {
+        arrow.style.left = '-7px'; arrow.style.top = '50%'; arrow.style.marginTop = '-7px';
+      } else if (slot.endsWith('-h')) {
+        arrow.style.right = '-7px'; arrow.style.left = 'auto'; arrow.style.top = '50%'; arrow.style.marginTop = '-7px';
+      }
+    }
+
+    function buildCustomCode() {
+      const colors = {
+        primary: document.getElementById('c-primary').value,
+        footer: document.getElementById('c-footer').value,
+        spotlightBorder: document.getElementById('c-spotlight').value,
+        title: document.getElementById('c-title').value,
+        content: document.getElementById('c-content').value,
+        navText: document.getElementById('c-nav').value,
+        tooltipBg: document.getElementById('c-tooltip').value,
+        helpBtnBg: document.getElementById('c-help').value,
+        overlay: document.getElementById('c-overlay').value
+      };
+
+      const slot = document.getElementById('sel-position').value;
+      const title = document.getElementById('txt-title').value.replace(/'/g, "\\'");
+      const content = document.getElementById('txt-content').value.replace(/'/g, "\\'").replace(/\n/g, ' ');
+      const padding = document.getElementById('num-padding').value;
+      const margin = document.getElementById('num-margin').value;
+      const width = document.getElementById('num-width').value;
+
+      if (slot === 'welcome') {
+        return `const config = {
+  settings: {
+    padding: ${padding},
+    prevBtnText: '${document.getElementById('txt-prev').value}',
+    nextBtnText: '${document.getElementById('txt-next').value}',
+    doneBtnText: '${document.getElementById('txt-done').value}',
+    colors: {
+      primary: '${colors.primary}',
+      footer: '${colors.footer}',
+      spotlightBorder: '${colors.spotlightBorder}',
+      title: '${colors.title}',
+      content: '${colors.content}',
+      navText: '${colors.navText}',
+      tooltipBg: '${colors.tooltipBg}',
+      helpBtnBg: '${colors.helpBtnBg}',
+      overlay: '${colors.overlay}'
+    }
+  },
+  steps: [
+    {
+      welcome: true,
+      title: '${title}',
+      content: '${content}'
+    }
+  ]
+};`;
+      }
+
+      let posLines = '';
+      if (slot === 'bottom' || slot === 'top') {
+        posLines = `  position: '${slot}',\n  margin: ${margin}`;
+      } else {
+        const isH = slot.endsWith('-h');
+        const zone = isH ? slot.replace('-h', '') : slot;
+        posLines = `  quadrant: '${zone}'` + (isH ? `,\n  split: 'h'` : '') + `,\n  margin: ${margin}`;
+      }
+
+      return `const config = {
+  settings: {
+    padding: ${padding},
+    prevBtnText: '${document.getElementById('txt-prev').value}',
+    nextBtnText: '${document.getElementById('txt-next').value}',
+    doneBtnText: '${document.getElementById('txt-done').value}',
+    colors: {
+      primary: '${colors.primary}',
+      footer: '${colors.footer}',
+      spotlightBorder: '${colors.spotlightBorder}',
+      title: '${colors.title}',
+      content: '${colors.content}',
+      navText: '${colors.navText}',
+      tooltipBg: '${colors.tooltipBg}',
+      helpBtnBg: '${colors.helpBtnBg}',
+      overlay: '${colors.overlay}'
+    }
+  },
+  steps: [
+    {
+      element: '[data-tour="meu-elemento"]',
+      title: '${title}',
+      content: '${content}',
+${posLines}
+    }
+  ]
+};`;
+    }
+
+    function updateCustomDemo() {
+      const primary = document.getElementById('c-primary').value;
+      customStage.style.setProperty('--vt-primary', primary);
+      customStage.style.setProperty('--vt-glow', hexToRgba(primary, 0.3));
+
+      document.querySelectorAll('#custom-controls [data-var]').forEach(input => {
+        if (input.id === 'c-primary') return;
+        const val = input.type === 'color' ? input.value : input.value;
+        customStage.style.setProperty(input.dataset.var, val);
+      });
+
+      const footer = document.getElementById('c-footer').value;
+      customStage.style.setProperty('--vt-footer', footer);
+
+      const step = Math.min(
+        Number(document.getElementById('num-step').value) || 1,
+        Number(document.getElementById('num-total').value) || 1
+      );
+      const total = Number(document.getElementById('num-total').value) || 7;
+      const pct = Math.round((step / total) * 100);
+
+      document.getElementById('demo-title').textContent = document.getElementById('txt-title').value;
+      document.getElementById('demo-content').textContent = document.getElementById('txt-content').value;
+      document.getElementById('demo-progress-text').textContent = `Passo ${step} de ${total}`;
+      document.getElementById('demo-progress-fill').style.width = pct + '%';
+
+      const isLast = step >= total;
+      document.getElementById('demo-prev').textContent = '‹ ' + document.getElementById('txt-prev').value;
+      document.getElementById('demo-next').textContent = (isLast ? document.getElementById('txt-done').value : document.getElementById('txt-next').value) + ' ›';
+
+      const width = document.getElementById('num-width').value;
+      customStage.style.setProperty('--demo-tooltip-width', width + 'px');
+
+      const margin = Number(document.getElementById('num-margin').value) || 15;
+      const slot = document.getElementById('sel-position').value;
+      positionCustomTooltip(slot, margin);
+
+      document.getElementById('custom-code').textContent = buildCustomCode();
+    }
+
+    document.querySelectorAll('#custom-controls input, #custom-controls textarea, #custom-controls select').forEach(el => {
+      el.addEventListener('input', updateCustomDemo);
+      el.addEventListener('change', updateCustomDemo);
+    });
+
+    window.addEventListener('resize', updateCustomDemo);
+    updateCustomDemo();
+  </script>
+</body>
+</html>
