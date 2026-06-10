@@ -232,33 +232,63 @@
 
     /* Customização */
     .custom-layout {
-      display: grid; grid-template-columns: 340px 1fr; gap: 20px;
-      min-height: calc(100vh - 115px); padding: 24px;
+      display: grid; grid-template-columns: minmax(0, 380px) minmax(0, 1fr); gap: 20px;
+      min-height: calc(100vh - 115px); padding: 24px; align-items: start;
+      overflow: hidden; width: 100%;
     }
+    #view-custom { overflow-x: hidden; }
     @media (max-width: 1000px) {
-      .custom-layout { grid-template-columns: 1fr; }
+      .custom-layout { grid-template-columns: minmax(0, 1fr); }
     }
-    .custom-controls { display: flex; flex-direction: column; gap: 14px; }
+    .custom-controls {
+      display: flex; flex-direction: column; gap: 14px;
+      min-width: 0; max-width: 100%; width: 100%;
+    }
     .ctrl-group {
       background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 16px;
+      min-width: 0; max-width: 100%; width: 100%; overflow: hidden;
+    }
+    .ctrl-stack {
+      display: flex; flex-direction: column; gap: 6px;
+      width: 100%; min-width: 0; max-width: 100%;
+    }
+    .ctrl-group--buttons .ctrl-field {
+      width: 100%; min-width: 0; max-width: 100%;
+    }
+    .ctrl-group--buttons .ctrl-field label { font-size: .68rem; }
+    .ctrl-group--buttons .ctrl-field input {
+      display: block; width: 100%; max-width: 100%; min-width: 0;
+      padding: 4px 8px; font-size: .75rem; height: 28px;
+      box-sizing: border-box;
     }
     .ctrl-group h3 { font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: 12px; }
-    .ctrl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    .ctrl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; min-width: 0; }
     .ctrl-row:last-child { margin-bottom: 0; }
-    .ctrl-field { display: flex; flex-direction: column; gap: 4px; }
+    .ctrl-field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
     .ctrl-field.full { grid-column: 1 / -1; }
     .ctrl-field label { font-size: .72rem; color: var(--muted); }
     .ctrl-field input[type="text"],
     .ctrl-field input[type="number"],
     .ctrl-field textarea,
     .ctrl-field select {
+      width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;
       padding: 7px 9px; border: 1px solid var(--border); border-radius: 6px;
       font-size: .8rem; font-family: inherit;
     }
-    .ctrl-field input[type="color"] { height: 34px; padding: 2px; cursor: pointer; border: 1px solid var(--border); border-radius: 6px; }
+    .ctrl-field input[type="color"] {
+      width: 100%; max-width: 100%; height: 34px; padding: 2px; cursor: pointer;
+      border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box;
+    }
+    .ctrl-field input[type="number"] {
+      -moz-appearance: textfield;
+    }
+    .ctrl-field input[type="number"]::-webkit-outer-spin-button,
+    .ctrl-field input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none; margin: 0;
+    }
     .ctrl-field textarea { resize: vertical; min-height: 52px; }
 
-    .custom-demo-wrap { display: flex; flex-direction: column; gap: 14px; }
+    .custom-demo-wrap { display: flex; flex-direction: column; gap: 14px; min-width: 0; max-width: 100%; }
     .custom-demo-label { font-size: .72rem; text-transform: uppercase; color: var(--muted); font-weight: 600; }
     .custom-demo-stage {
       position: relative; border-radius: 12px; overflow: hidden;
@@ -1035,9 +1065,9 @@ tour.start()                <span class="c">→ passo 0: beforeShow? → action?
           </div>
         </div>
 
-        <div class="ctrl-group">
+        <div class="ctrl-group ctrl-group--buttons">
           <h3>Botões (settings)</h3>
-          <div class="ctrl-row">
+          <div class="ctrl-stack">
             <div class="ctrl-field"><label>prevBtnText</label><input type="text" id="txt-prev" value="Voltar"></div>
             <div class="ctrl-field"><label>nextBtnText</label><input type="text" id="txt-next" value="Próximo"></div>
             <div class="ctrl-field"><label>doneBtnText</label><input type="text" id="txt-done" value="Finalizar"></div>
